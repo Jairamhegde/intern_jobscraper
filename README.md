@@ -23,6 +23,3 @@ The goal of this project is to understand job market trends such as hiring compa
 - BeautifulSoup
 - Pandas
 
----
-
-## Project Structure
