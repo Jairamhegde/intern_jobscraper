@@ -1,11 +1,28 @@
+# Internshala Job Scraper & Analyzer
 
+## Overview
+This project is a Python-based web scraper that extracts job postings from the Internshala website.  
+It supports pagination, cleans unstructured job data, and exports the processed data into a CSV file for further analysis.
 
-<h1>Internshal Job Scraper</h1>
-<p>This is internshal job scraper ,which takes the url of the website and <br> page number,means how many pages you want to srape.after scraping the data it cleans and exports it to a csv file.</p>
+The goal of this project is to understand job market trends such as hiring companies, job roles, and salary ranges.
 
-<h2 style="color:red;">#Chalenges Faced</h2>
-<ul>
-    <li>Extracting multiple pages</li>
-    <li>Cleaning the data</li>
-    <li>Handling missing values</li>
-</ul>
+---
+
+## Features
+- Scrapes multiple pages of job listings
+- Handles missing and inconsistent data safely
+- Cleans salary ranges and converts them into numeric values
+- Exports cleaned data to a CSV file
+- Modular and reusable project structure
+
+---
+
+## Technologies Used
+- Python
+- Requests
+- BeautifulSoup
+- Pandas
+
+---
+
+## Project Structure
