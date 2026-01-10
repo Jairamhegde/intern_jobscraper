@@ -1,6 +1,10 @@
+
 from scraper.fetcher import get_soup
 from scraper.extractor import scrape_data
 from scraper.cleanData import clean_data
+from insights.insight import generate_insights
+from pathlib import Path
+
 def internshala(url,pages):
         
         newl=[]
@@ -16,5 +20,4 @@ def internshala(url,pages):
 
 if __name__=='__main__':
     internshala("https://internshala.com/jobs/",3)
-
-# hello
+    generate_insights("insights//cleaned.csv")
