@@ -1,45 +1,78 @@
 import streamlit as st
 import pandas as pd
-import matplotlib.pyplot as plt
-import seaborn as sns 
+import plotly.express as px
+import plotly.graph_objects as go
 from pathlib import Path
 
 
-st.set_page_config(page_title="Job Market Insights", layout="centered")
-st.title("Job Market Insights Dashboard")
 BASE_DIR = Path(__file__).resolve().parent
 INSIGHTS_DIR = BASE_DIR / "insights"
 DATA_FILE = INSIGHTS_DIR / "cleaned.csv"
 
-df = pd.read_csv(DATA_FILE)
+data="insights\cleaned.csv"
 
-column1,locumn2 = st.columns(2)
-with column1:
-    st.subheader("Top Companies Hiring the Most")
+st.set_page_config(
+    page_title="Job Market Analysis",
+    layout="wide",
+    initial_sidebar_state="collapsed"  
+)
+st.markdown("""<style>
+.main-title{
+            text-align:center;
+            color:white;
+            font-size:5rem;
+            font-weight:bold;
+            }
+</style>""",unsafe_allow_html=True)
 
-    company_counts = df['company'].value_counts().head(5)
+st.markdown("<p class='main-title'>Job Market Analysis</p>",unsafe_allow_html=True)
+st.markdown("--------")
 
-    fig1, ax1 = plt.subplots(figsize=(6,6))
-    ax1.pie(
-        company_counts.values,
-        labels=company_counts.index,
-        autopct='%1.1f%%',
-        startangle=140)
-    ax1.set_title("Top 5 Companies by Job Count")
-    st.pyplot(fig1)
-with locumn2:
-    st.subheader("Average Salary by Company")
-    df['avg_salary'] = (df['Min_sal'] + df['Max_sal']) / 2
-    avg_salary = (
-        df.groupby('company')['avg_salary']
-        .mean()
-        .sort_values(ascending=False)
-        .head(5)
+def showInsight(datafile):
+    df=pd.read_csv(datafile)
+    tab1,tab2=st.tabs(
+        ["Top Hiring Companies","Average Salary by Job Title"]
     )
-    fig2, ax2 = plt.subplots(figsize=(6,6))
-    sns.barplot(x=avg_salary.index, y=avg_salary.values, ax=ax2)
-    ax2.set_xlabel("Company")
-    ax2.set_ylabel("Average Salary")
-    ax2.set_title("Top 5 Companies by Average Salary")
-    plt.xticks(rotation=45)
-    st.pyplot(fig2)
+    with tab1:
+        column1,column2=st.columns(2)
+        with column1:
+            st.markdown("Top Companies Hiring")
+            company_counts = df['company'].value_counts().head(10)
+        
+            fig = px.bar(
+                x=company_counts.values,
+                y=company_counts.index,
+                orientation='h',
+                labels={'x': 'Number of Jobs', 'y': 'Company'},
+                color=company_counts.values,
+                color_continuous_scale='Blues'
+            )
+            fig.update_layout(
+                showlegend=False,
+                height=400,
+                margin=dict(l=0, r=0, t=30, b=0)
+            )
+            st.plotly_chart(fig, use_container_width=True)
+
+        with column2:
+            st.markdown("Average Salary asper Job Title")
+            df['average']=(df['Min_sal']+df['Max_sal'])/2
+            fig=px.bar(
+                df.groupby('job')['average'].mean().sort_values(ascending=False).head(10),
+                labels={'value':'Average Salary','job':'Job Title'},
+                color=df.groupby('job')['average'].mean().sort_values(ascending=False).head(10).values,
+                color_continuous_scale='Blues'
+            )
+            st.plotly_chart(fig,use_container_width=True)
+
+    with tab2:
+        column1,column2=st.columns(2)
+        with column1:
+            pass
+            
+
+showInsight(DATA_FILE)
+
+
+
+
