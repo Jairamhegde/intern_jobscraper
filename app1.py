@@ -124,7 +124,7 @@ with tab1:
     col1, col2 = st.columns(2)
     
     with col1:
-        st.markdown("#### Top Companies Hiring")
+        st.markdown("Top Companies Hiring")
         company_counts = filtered_df['company'].value_counts().head(10)
         
         fig = px.bar(

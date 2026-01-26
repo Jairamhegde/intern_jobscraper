@@ -27,7 +27,7 @@ def generate_insights(dataFile):
 
 data = INSIGHTS_DIR / "cleaned.csv"
 
-generate_insights(data)
+# generate_insights(data)
 
 
     
