@@ -25,46 +25,14 @@ def scrape_data(soup):
             "company":comp,
             "status":status,
             "Salary":sal,
-            "TechStack":techstack if techstack else np.nan,
-            "Location":location if location else np.nan
+            "TechStack":techstack ,
+            "Location":location 
             }
         job_data.append(jd)
-        
-        # -----------------------------------------------------------------------------------------------
-        # We already created tables from __init__.py file in db folder, so we directly insert values here
-        # Insert data to jobs table
-        cur.execute(
-            'INSERT INTO jobs(j_title,location,salary,status) values(?,?,?,?)',
-            (
-                jd['job'],
-                jd['Location'],
-                jd['Salary'],
-                jd['status'],
-            )
-        )
-        # Get the job id
-        job_id=cur.lastrowid
-        # insert data into skills table
-        if techstack:
-            for techstack in techstack:
-                cur.execute(
-                    'INSERT OR IGNORE INTO skills(name) VALUES(?)',
-                    (techstack,))
-                
-                cur.execute(
-                    'SELECT s_id FROM skills WHERE name=?',
-                    (techstack,)
-                )
-                skill_id=cur.fetchone()[0] #this line fetches the skill id which helps to map the skils with the job in jo_skills table
-
-                # Insert data into job_skills table
-                cur.execute(
-                    "INSERT INTO job_skills(job_id,skill_id) VALUES (?,?)",
-                    (job_id,skill_id)
-                )
+       
     
-    conn.commit()  #commit the changes
-    conn.close()    #close the connection
+        
+       
     return job_data
 '''
 1.select_one : is a css selctor

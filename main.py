@@ -7,7 +7,18 @@ from app import DashBoard
 from pathlib import Path
 import subprocess
 import sys
+import logging
+import sqlite3
+from db.db_manager import manage_operation
 
+
+
+logging.basicConfig(
+     filename="logfile.log",
+     level=logging.INFO,
+     format='%(asctime)s-%(levelname)s-%(name)s-%(message)s'
+)
+logging.info("Execution started..")
 def internshala(url,pages):    
         newl=[]
         for i in range(1,pages+1):
@@ -16,9 +27,11 @@ def internshala(url,pages):
             else:
                 link=url+f'page-{i}'
             g=get_soup(link)
-            s=scrape_data(g)
-            newl.extend(s)
-        clean_data(newl)
+            x=scrape_data(g)
+            logging.info(f"Scraped data from page {i}")
+            manage_operation(x)
+            # newl.extend(s)
+        # clean_data(newl)
 
 def run_streamlit():
     subprocess.run([

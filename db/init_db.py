@@ -2,7 +2,6 @@ import sqlite3
 
 conn=sqlite3.connect("jobs.db")
 cur=conn.cursor()
-
 cur.execute(
     '''
 CREATE TABLE IF NOT EXISTS jobs(
@@ -14,7 +13,6 @@ status TEXT
 )
 '''
 )
-
 cur.execute(
     '''
 CREATE TABLE IF NOT EXISTS skills(
@@ -23,7 +21,6 @@ name TEXT
 )
 '''
 )
-
 cur.execute(
     '''
 CREATE TABLE IF NOT EXISTS job_skills(
@@ -34,5 +31,7 @@ FOREIGN KEY (skill_id) REFERENCES skills(s_id)
 )
 '''
 )
+
+
 conn.commit()
 conn.close()

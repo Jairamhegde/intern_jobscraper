@@ -4,6 +4,7 @@ def DashBoard(file_path):
     import plotly.express as px
     import plotly.graph_objects as go
     from pathlib import Path
+    from queries.analysis import topSkills,roles,topLocations
 
 
     BASE_DIR = Path(__file__).resolve().parent
@@ -30,22 +31,23 @@ def DashBoard(file_path):
     st.markdown("--------")
 
     # def showInsight(datafile):
-    df=pd.read_csv(datafile)
+    df=topSkills()
     tab1,tab2=st.tabs(
         ["Top Hiring Companies","Average Salary by Job Title"]
     )
     with tab1:
         column1,column2=st.columns(2)
         with column1:
-            st.markdown("Top Companies Hiring")
-            company_counts = df['company'].value_counts().head(10)
+            st.markdown("Top Demanding Skills")
+            skills = df['name']
+            demand=df['demand']
         
             fig = px.bar(
-                x=company_counts.values,
-                y=company_counts.index,
+                x=demand,
+                y=skills,
                 orientation='h',
-                labels={'x': 'Number of Jobs', 'y': 'Company'},
-                color=company_counts.values,
+                labels={'x': 'Number of Jobs', 'y': 'Skills'},
+    
                 color_continuous_scale='Blues'
             )
             fig.update_layout(
@@ -54,15 +56,16 @@ def DashBoard(file_path):
                 margin=dict(l=0, r=0, t=30, b=0)
             )
             st.plotly_chart(fig, use_container_width=True)
-
+        df2=roles()
         with column2:
-            st.markdown("Average Salary asper Job Title")
-            df['average']=(df['Min_sal']+df['Max_sal'])/2
+            st.markdown("Top Demanding Roles")
+            job_roles=df2['J_title']
+            demandRoles=df2['demand']
             fig=px.bar(
-                x=df['company'  ].value_counts().head(10).values,
-                y=df.groupby('job')['average'].mean().sort_values(ascending=False).head(10).index,
-                labels={'value':'Average Salary','job':'Job Title'},
-                color=df.groupby('job')['average'].mean().sort_values(ascending=False).head(10).values,
+                x=demandRoles,
+                y=job_roles,
+                labels={'x':'demand','y':'Job '},
+                color=job_roles,
                 color_continuous_scale='reds',
             )
             fig.update_layout(
