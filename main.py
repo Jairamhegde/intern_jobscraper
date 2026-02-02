@@ -30,8 +30,7 @@ def internshala(url,pages):
             x=scrape_data(g)
             logging.info(f"Scraped data from page {i}")
             manage_operation(x)
-            # newl.extend(s)
-        # clean_data(newl)
+         
 
 def run_streamlit():
     subprocess.run([
