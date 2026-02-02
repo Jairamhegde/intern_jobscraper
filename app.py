@@ -1,87 +1,102 @@
-def DashBoard(file_path):
-    import streamlit as st
-    import pandas as pd
-    import plotly.express as px
-    import plotly.graph_objects as go
-    from pathlib import Path
-    from queries.analysis import topSkills,roles,topLocations
+from queries.analysis import *
+import streamlit as st
+import plotly.express as px
 
-
-    BASE_DIR = Path(__file__).resolve().parent
-    FILEPATH_DIR = BASE_DIR / f"{file_path}"
-    # DATA_FILE = INSIGHTS_DIR / "cleaned.csv"
-
-    datafile=FILEPATH_DIR
-
+def Dashboard():
     st.set_page_config(
         page_title="Job Market Analysis",
-        layout="wide",
-        initial_sidebar_state="collapsed"  
+        layout="wide"
     )
-    st.markdown("""<style>
-    .main-title{
-                text-align:center;
-                color:white;
-                font-size:5rem;
-                font-weight:bold;
-                }
-    </style>""",unsafe_allow_html=True)
 
-    st.markdown("<p class='main-title'>Job Market Analysis</p>",unsafe_allow_html=True)
-    st.markdown("--------")
-
-    # def showInsight(datafile):
-    df=topSkills()
-    tab1,tab2=st.tabs(
-        ["Top Hiring Companies","Average Salary by Job Title"]
+    # ===== TITLE =====
+    st.markdown(
+        "<h1 style='text-align:center;'> Internship Job Market Analysis</h1>",
+        unsafe_allow_html=True
     )
-    with tab1:
-        column1,column2=st.columns(2)
-        with column1:
-            st.markdown("Top Demanding Skills")
-            skills = df['name']
-            demand=df['demand']
+    st.markdown("---")
+
+    # ===== SECTION 1: OVERVIEW =====
+    st.subheader("Market Overview")
+
+    col1, col2 = st.columns(2)
+
+    # ---- Top Skills ----
+    with col1:
+        df = topSkills()
+        topskill1=df.iloc[0]['name']
+        topskill2=df.iloc[1]['name']
+        topskill3=df.iloc[2]['name']
+
+        fig = px.bar(
+            df,
+            x="demand",
+            y="name",
+            orientation="h",
+            title="Top Demanding Skills",
+            color_discrete_sequence=["#4da6ff"]
+        )
+        fig.update_layout(height=400)
+        st.plotly_chart(fig, use_container_width=True)
+
+        st.markdown(
+            "**Insight:** Python, MySQL, and JavaScript dominate internship requirements, indicating strong demand for backend and data-related skills."
+        )
+
+    # ---- Top Roles ----
+    with col2:
+        df2 = roles()
+        topRole1=df2.iloc[0]['J_title']
+        topRole2=df2.iloc[1]['J_title']
         
-            fig = px.bar(
-                x=demand,
-                y=skills,
-                orientation='h',
-                labels={'x': 'Number of Jobs', 'y': 'Skills'},
+
+        fig = px.bar(
+            df2,
+            x="demand",
+            y="J_title",
+            orientation="h",
+            title="Top Demanding Roles",
+            color_discrete_sequence=["#ff6666"]
+        )
+        fig.update_layout(height=400)
+        st.plotly_chart(fig, use_container_width=True)
+
+        st.markdown(
+            f"**Insight:** {topRole1} and {topRole2} account for the majority of openings, suggesting companies prefer versatile engineers at the intern level."
+        )
+
+    st.markdown("---")
+
+    # ===== SECTION 2: DEEP INSIGHT =====
+    st.subheader("Skill Overlap Across Top Roles")
     
-                color_continuous_scale='Blues'
-            )
-            fig.update_layout(
-                showlegend=False,
-                height=400,
-                margin=dict(l=0, r=0, t=30, b=0)
-            )
-            st.plotly_chart(fig, use_container_width=True)
-        df2=roles()
-        with column2:
-            st.markdown("Top Demanding Roles")
-            job_roles=df2['J_title']
-            demandRoles=df2['demand']
-            fig=px.bar(
-                x=demandRoles,
-                y=job_roles,
-                labels={'x':'demand','y':'Job '},
-                color=job_roles,
-                color_continuous_scale='reds',
-            )
-            fig.update_layout(
-                showlegend=False,
-                height=400,
-                margin=dict(l=0, r=0, t=30, b=0)
-            )
-            st.plotly_chart(fig,use_container_width=True)
+    df3 = commonRoles()
+    mostcommonSkill=df3.iloc[0]['skill']
 
-    with tab2:
-        column1,column2=st.columns(2)
-        with column1:
-            pass
+    fig = px.bar(
+        df3,
+        x="total_occurrences",
+        y="skill",
+        orientation="h",
+        title="Common Skills in Top 2 Demanding Roles",
+        color_discrete_sequence=["#66cc99"]
+    )
+    fig.update_layout(height=450)
+    st.plotly_chart(fig, use_container_width=True)
 
-DashBoard('D:\java\Python\jobscraper\intern_jobscraper\insights\cleaned.csv')
+    st.markdown(
+        f"**Insight:** These skills consistently appear across both top hiring roles which are {topRole1} and {topRole2},and here {mostcommonSkill} is the most common skill."
+    )
 
+    st.markdown("---")
 
+    # ===== SECTION 3: FINAL TAKEAWAY =====
+    st.subheader("Key Takeaways")
+    st.markdown(
+        f"""
+        - {topRole1} and {topRole2} roles dominate internship hiring.
+        - {topskill1}, {topRole2}, and {topskill3} form the core skill set across roles.
+        - Skill overlap shows companies value stack-based, not isolated, expertise.
+        """
+    )
 
-
+Dashboard()

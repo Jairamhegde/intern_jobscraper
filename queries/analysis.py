@@ -38,6 +38,32 @@ def topLocations():
     df=pd.read_sql_query(query,conn)
     conn.close()
     return df
-# print(topSkills())
-print(roles())
+def commonRoles():
+    conn=sqlite3.connect(db_path)
+    query='''
+        SELECT
+        s.name AS skill,
+        COUNT(DISTINCT j.j_title) AS role_count,
+        COUNT(*) AS total_occurrences
+    FROM jobs j
+    JOIN job_skills js ON j.j_id = js.job_id
+    JOIN skills s ON s.s_id = js.skill_id
+    WHERE j.j_title IN (
+        SELECT j_title
+        FROM jobs
+        GROUP BY j_title
+        ORDER BY COUNT(*) DESC
+        LIMIT 2
+    )
+    GROUP BY s.name
+    HAVING COUNT(DISTINCT j.j_title) = 2
+ORDER BY total_occurrences DESC;
+
+'''
+    df=pd.read_sql_query(query,conn)
+    conn.close()
+    return df
+
+# print(roles())
+print(commonRoles())
 
